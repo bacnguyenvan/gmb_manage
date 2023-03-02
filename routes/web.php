@@ -16,3 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/dashboard', 'HomeController@dashboard');
+Route::get('/connect-account', 'HomeController@connectAccount')->name('connect-account');
+Route::get('/reply', 'HomeController@reply')->name('reply');
