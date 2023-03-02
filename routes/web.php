@@ -17,6 +17,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-Route::get('/dashboard', 'HomeController@dashboard');
+Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
 Route::get('/connect-account', 'HomeController@connectAccount')->name('connect-account');
 Route::get('/reply', 'HomeController@reply')->name('reply');
