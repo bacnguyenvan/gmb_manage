@@ -1,8 +1,20 @@
-@extends('layouts.app') 
+@extends('layouts.app')
 @section('title','Dashboard')
 @section('content')
 <div class="content-wrapper">
-
+    @if(session('success-msg'))
+    <div class="alert alert-success alert-dismissible mt-3 ml-3 alert-msg">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-check"></i> Alert!</h5>
+        {{session('success-msg')}}
+    </div>
+    @elseif(session('error-msg'))
+    <div class="alert alert-danger alert-dismissible mt-3 ml-3 alert-msg">
+        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+        <h5><i class="icon fas fa-check"></i> Alert!</h5>
+        {{session('error-msg')}}
+    </div>
+    @endif
     <!-- Main content -->
     <section class="content">
         <div class="container-fluid">
@@ -14,65 +26,61 @@
                     <!-- DIRECT CHAT -->
                     <div class="card direct-chat direct-chat-primary">
                         <div class="card-header">
-                            <h3 class="card-title">Google business account</h3>
+                            <h3 class="card-title">
+                                @if($account)Locations List managed by <b>{{$account->account_name}}</b>
+                                @else
+                                Google business account
+                                @endif
+                            </h3>
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body mt-2 ml-2">
                             <div class="row">
-                                <!-- /.col -->
-                                <div class="col-md-4">
-                                    <!-- Widget: user widget style 1 -->
-                                    <div class="card card-widget widget-user shadow">
-                                        <!-- Add the bg color to the header using any of the bg-* classes -->
-                                        <div class="widget-user-header bg-info">
-                                            <h3 class="widget-user-username">Alexander Pierce</h3>
-                                            <h5 class="widget-user-desc">Founder & CEO</h5>
-                                        </div>
-                                        <div class="widget-user-image">
-                                            <img class="img-circle elevation-2" src="../dist/img/user1-128x128.jpg" alt="User Avatar">
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12">
-                                                    <div class="description-block text-align">
-                                                        <h5 class="description-header">3</h5>
-                                                        <span class="description-text">Reviews</span>
+                                @if($account)
+                                    @if(!empty($locations))
+                                        @foreach($locations as $location)
+                                        <a class="col-md-4" href="{{route('review', $location->name)}}?aid={{$account->account_id}}&&aname={{$location->title}}">
+                                            <!-- Widget: user widget style 1 -->
+                                            <div class="card card-widget widget-user shadow-lg">
+                                                <!-- Add the bg color to the header using any of the bg-* classes -->
+                                                <div class="widget-user-header bg-info text-left">
+                                                    <h3 class="widget-user-username">{{ $location->title }}</h3>
+                                                    <p class="widget-user-desc">{{ $location->profile->description ?? '' }} - {{$location->phoneNumbers->primaryPhone ?? ''}}</p>
+                                                </div>
+                                                <div class="widget-user-image">
+                                                    <img class="img-circle" src="../dist/img/gmb.jpg" alt="User Avatar">
+                                                </div>
+                                                <div class="card-footer">
+                                                    <div class="row">
+                                                        <div class="col-sm-12">
+                                                            <div class="description-block">
+                                                                <h5 class="description-header">15</h5>
+                                                                <span class="description-text">Reviews</span>
+                                                            </div>
+                                                            <!-- /.description-block -->
+                                                        </div>
                                                     </div>
-                                                    <!-- /.description-block -->
+                                                    <!-- /.row -->
                                                 </div>
                                             </div>
-                                            <!-- /.row -->
+                                            <!-- /.widget-user -->
+</a>
+                                        @endforeach
+                                    @else
+                                    <div class="col-md-12 mt-2 mb-4">
+                                        <div class="alert alert-danger alert-dismissible">
+                                            <h5><i class="icon fas fa-ban"></i> Alert!</h5>
+                                            The account has no management location.
                                         </div>
                                     </div>
-                                    <!-- /.widget-user -->
-                                </div>
-                                <!-- /.col -->
-                                <div class="col-md-4">
-                                    <!-- Widget: user widget style 1 -->
-                                    <div class="card card-widget widget-user shadow-lg">
-                                        <!-- Add the bg color to the header using any of the bg-* classes -->
-                                        <div class="widget-user-header text-white" style="background: url('../dist/img/photo1.png') center center;">
-                                            <h3 class="widget-user-username text-right">Elizabeth Pierce</h3>
-                                            <h5 class="widget-user-desc text-right">Web Designer</h5>
-                                        </div>
-                                        <div class="widget-user-image">
-                                            <img class="img-circle" src="../dist/img/user3-128x128.jpg" alt="User Avatar">
-                                        </div>
-                                        <div class="card-footer">
-                                            <div class="row">
-                                                <div class="col-sm-12 border-right">
-                                                    <div class="description-block">
-                                                        <h5 class="description-header">15</h5>
-                                                        <span class="description-text">Reviews</span>
-                                                    </div>
-                                                    <!-- /.description-block -->
-                                                </div>
-                                            </div>
-                                            <!-- /.row -->
-                                        </div>
+                                    @endif
+                                @else
+                                <div class="col-md-12 mt-2 mb-4">
+                                    <div class="col-md-2 m-auto">
+                                        <a href="{{route('gmb-connect')}}" class="btn btn-block btn-success btn-lg">Connect account</a>
                                     </div>
-                                    <!-- /.widget-user -->
                                 </div>
+                                @endif
                                 <!-- /.col -->
                             </div>
                         </div>
@@ -89,6 +97,11 @@
 @endsection
 
 @section('script')
+<script>
+    $(document).ready(function() {
+        $('.alert-msg').fadeOut(6000);
+    });
+</script>
 @endsection
 
 @section('css')
