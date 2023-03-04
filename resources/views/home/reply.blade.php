@@ -32,7 +32,7 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body">
-                            @for($i = 1; $i <= 5; $i++)
+                            @foreach($replies as $i => $starData)
                             <div class="row">
                                 <div class="col-md-12">
                                     <!-- DIRECT CHAT SUCCESS -->
@@ -63,9 +63,10 @@
                                                 <div class="col-md-8">
                                                     <form method="post" action="">
                                                         @csrf
-                                                        <div class="row mb-2">
+                                                        <div class="row mb-2 mt-2">
                                                             <div class="col-lg-12 reply-form">
                                                                 <input type="hidden" name='star_id' value="{{$i}}"/>
+                                                                @if(count($starData) == 0)
                                                                 <div id="inputFormRow" class="inputFormRow">
                                                                     <div class="input-group mb-3">
                                                                         <input type="text" name="content[]" class="form-control m-input" placeholder="Enter reply content" autocomplete="off">
@@ -74,7 +75,18 @@
                                                                         </div>
                                                                     </div>
                                                                 </div>
-
+                                                                @else
+                                                                    @foreach($starData as $val)
+                                                                    <div id="inputFormRow" class="inputFormRow">
+                                                                        <div class="input-group mb-3">
+                                                                            <input type="text" name="content[]" class="form-control m-input" placeholder="Enter reply content" autocomplete="off" value="{{$val->content}}">
+                                                                            <div class="input-group-append">
+                                                                                <button id="removeRow" type="button" class="btn btn-danger removeRow">Remove</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    @endforeach
+                                                                @endif
                                                                 <div id="newRow"></div>
                                                                 <button id="addRow" type="button" class="btn btn-info addRow">Add template</button>
                                                                 <button type="submit" class="btn btn-info">Save</button>
@@ -89,7 +101,7 @@
 
                                 </div>
                             </div>
-                            @endfor
+                            @endforeach
                             
                         </div>
                         <!-- /.row (main row) -->
@@ -131,7 +143,7 @@
     });
 
     $('.alert-msg').fadeOut(6000);
-    
+
 </script>
 @endsection
 

@@ -7,6 +7,7 @@ use App\Modules\GoogleClient;
 use App\Publishers\GooglePublisher;
 use App\Services\GMBService;
 use Illuminate\Http\Request;
+use App\Models\StarTemplate;
 class HomeController extends Controller
 {
     public function dashboard()
@@ -45,20 +46,43 @@ class HomeController extends Controller
             $contents = $request->content;
             $star_id = $request->star_id;
 
+            if(count(array_unique($contents))<count($contents)) {
+                return redirect()->route('reply')->with('error-msg', "Duplicate content");
+            }
+
             if(count($contents) > 5 || count($contents) == 0 || !in_array($star_id, [1,2,3,4,5])) {
                 return redirect()->route('reply')->with('error-msg', "Total templates reply don't allow");
+            } else {
+                StarTemplate::deleteByStar($star_id);
+
+                for($i = 0 ; $i < count($contents); $i++) {
+                    StarTemplate::create([
+                        'star_id' => $star_id,
+                        'content' => $contents[$i]
+                    ]);
+                }
+                
+                return redirect()->route('reply')->with('success-msg', "Create reply template success");
             }
-            
-            for($i = 0 ; $i < count($contents); $i++) {
-                \App\Models\StarTemplate::create([
-                    'star_id' => $star_id,
-                    'content' => $contents[$i]
-                ]);
-            }
-            
-            return redirect()->route('reply')->with('success-msg', "Create reply template success");
-        }   
-        return view('home.reply');
+        }  
+        
+        $replyOneStart = StarTemplate::getByStarId(1);
+        $replyTwoStart = StarTemplate::getByStarId(2);
+        $replyThreeStart = StarTemplate::getByStarId(3);
+        $replyFourStart = StarTemplate::getByStarId(4);
+        $replyFiveStart = StarTemplate::getByStarId(5);
+
+        $data = [
+            'replies' => [
+                1 => $replyOneStart,
+                2 => $replyTwoStart,
+                3 => $replyThreeStart,
+                4 => $replyFourStart,
+                5 => $replyFiveStart,
+            ]
+        ];
+
+        return view('home.reply', $data);
     }
 
     public function review($id)
