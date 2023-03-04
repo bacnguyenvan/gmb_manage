@@ -69,14 +69,6 @@
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a href="{{route('connect-account')}}" class="nav-link">
-                                <i class="nav-icon fas fa-th"></i>
-                                <p>
-                                    Connect account
-                                </p>
-                            </a>
-                        </li>
-                        <li class="nav-item">
                             <a href="{{route('reply')}}" class="nav-link">
                                 <i class="nav-icon fas fa-edit"></i>
                                 <p>

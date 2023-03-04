@@ -18,8 +18,8 @@ Route::get('/', function () {
 });
 
 Route::get('/dashboard', 'HomeController@dashboard')->name('dashboard');
-Route::get('/connect-account', 'HomeController@connectAccount')->name('connect-account');
-Route::get('/reply', 'HomeController@reply')->name('reply');
+
+Route::match(['get', 'post'],'/reply', 'HomeController@reply')->name('reply');
 
 Route::get('/gmb/connect', 'GMBController@connect')->name('gmb-connect');
 

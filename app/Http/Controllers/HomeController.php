@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Modules\GoogleClient;
 use App\Publishers\GooglePublisher;
 use App\Services\GMBService;
+use Illuminate\Http\Request;
 class HomeController extends Controller
 {
     public function dashboard()
@@ -38,8 +39,25 @@ class HomeController extends Controller
         return view('home.connect_account');
     }
 
-    public function reply()
+    public function reply(Request $request)
     {
+        if($request->isMethod('POST')) {
+            $contents = $request->content;
+            $star_id = $request->star_id;
+
+            if(count($contents) > 5 || count($contents) == 0 || !in_array($star_id, [1,2,3,4,5])) {
+                return redirect()->route('reply')->with('error-msg', "Total templates reply don't allow");
+            }
+            
+            for($i = 0 ; $i < count($contents); $i++) {
+                \App\Models\StarTemplate::create([
+                    'star_id' => $star_id,
+                    'content' => $contents[$i]
+                ]);
+            }
+            
+            return redirect()->route('reply')->with('success-msg', "Create reply template success");
+        }   
         return view('home.reply');
     }
 
