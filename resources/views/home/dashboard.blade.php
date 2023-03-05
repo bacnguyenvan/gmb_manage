@@ -43,9 +43,11 @@
                                             <!-- Widget: user widget style 1 -->
                                             <div class="card card-widget widget-user shadow-lg">
                                                 <!-- Add the bg color to the header using any of the bg-* classes -->
-                                                <div class="widget-user-header bg-info text-left">
+                                                <div class="widget-user-header bg-info text-left location-block">
                                                     <h3 class="widget-user-username">{{ $location->title }}</h3>
-                                                    <p class="widget-user-desc">{{ $location->profile->description ?? '' }} - {{$location->phoneNumbers->primaryPhone ?? ''}}</p>
+                                                    <?php $description = $location->profile->description ?? '' ?>
+                                                    <p class="widget-user-desc">{!! \Illuminate\Support\Str::limit($description, $limit = 70, $end = '...')!!} </p>
+                                                    <p class="phone-number">{{$location->phoneNumbers->primaryPhone ?? ''}}</p>
                                                 </div>
                                                 <div class="widget-user-image">
                                                     <img class="img-circle" src="../dist/img/gmb.jpg" alt="User Avatar">
@@ -54,7 +56,7 @@
                                                     <div class="row">
                                                         <div class="col-sm-12">
                                                             <div class="description-block">
-                                                                <h5 class="description-header">15</h5>
+                                                                <h5 class="description-header">{{$location -> totalReviews}}</h5>
                                                                 <span class="description-text">Reviews</span>
                                                             </div>
                                                             <!-- /.description-block -->
@@ -105,4 +107,14 @@
 @endsection
 
 @section('css')
+<style>
+    .location-block {
+        position: relative;
+    }
+    .location-block .phone-number{
+        position: absolute;
+        left: 15px;
+        bottom: 0;
+    }
+</style>
 @endsection

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Account;
+use App\Models\Star;
 use App\Modules\GoogleClient;
 use App\Publishers\GooglePublisher;
 use App\Services\GMBService;
@@ -24,6 +25,14 @@ class HomeController extends Controller
 
         if(!empty($locations->locations)) {
             $locations = $locations->locations;
+            foreach($locations as $loc) {
+                $direction =  $account -> account_id . '/' . $loc -> name;
+
+                $reviews = $googlePublisher->getReviewsLocation($direction);
+
+                $loc->totalReviews = $reviews->totalReviewCount ?? 0;
+               
+            }
         } else {
             $locations = [];
         }
@@ -37,22 +46,25 @@ class HomeController extends Controller
 
     public function connectAccount()
     {
-        return view('home.connect_account');
+        $data = StarTemplate::paginate(3);
+
+        return view('home.connect_account', ['data' => $data]);
     }
 
     public function reply(Request $request)
     {
         if($request->isMethod('POST')) {
-            $contents = $request->content;
+            $contents = $request->content ?? [];
             $star_id = $request->star_id;
-
-            if(count(array_unique($contents))<count($contents)) {
-                return redirect()->route('reply')->with('error-msg', "Duplicate content");
-            }
 
             if(count($contents) > 5 || count($contents) == 0 || !in_array($star_id, [1,2,3,4,5])) {
                 return redirect()->route('reply')->with('error-msg', "Total templates reply don't allow");
             } else {
+
+                if(count(array_unique($contents))<count($contents)) {
+                    return redirect()->route('reply')->with('error-msg', "Duplicate content");
+                }
+
                 StarTemplate::deleteByStar($star_id);
 
                 for($i = 0 ; $i < count($contents); $i++) {
