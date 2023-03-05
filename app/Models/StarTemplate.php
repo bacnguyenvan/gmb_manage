@@ -23,6 +23,11 @@ class StarTemplate extends Model
         return self::getQueryByStarId($starId)->get();
     }
 
+    public static function getContentsByStarId($starId)
+    {
+        return self::getQueryByStarId($starId)->pluck('content')->toArray();
+    }
+
     public static function deleteByStar($starId)
     {
         self::getQueryByStarId($starId)->delete();

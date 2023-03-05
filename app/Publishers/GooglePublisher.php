@@ -110,7 +110,7 @@ class GooglePublisher
         }
     }
 
-    public function getBatchGetReviewsLocations($direction)
+    public function getBatchGetReviewsLocations($inputs, $direction)
     {
         try {
             if (empty($direction)) {
@@ -121,10 +121,14 @@ class GooglePublisher
 
             $url = self::ENDPOINT_BASE_V4 . "$direction/locations:batchGetReviews";
 
-            $response = Http::withHeaders([
+            $response = Http::contentType("text/plain")
+            ->withHeaders([
                 'Accept' => 'application/json',
                 'Authorization' => 'Bearer ' . $accessToken,
-            ])->post($url);
+            ])
+            ->send('POST', $url, [
+                'body' => json_encode($inputs)
+            ]);
 
             $data = json_decode($response->getBody());
 
@@ -153,6 +157,41 @@ class GooglePublisher
             $data = json_decode($response->getBody());
 
             return $data;
+        } catch (\Exception $e) {
+            throw $e;
+        }
+    }
+
+    public function replyReviews($data)
+    {
+        try {
+            if (empty($data)) {
+                return [];
+            }
+
+            $accessToken = $this->client->getAccessToken()['access_token'];
+            
+            $res = [];
+
+            foreach($data as $reviewId => $comment) {
+                $url = self::ENDPOINT_BASE_V4 . $reviewId . '/reply';
+                $response = Http::contentType("text/plain")
+                ->withHeaders([
+                    'Accept' => 'application/json',
+                    'Authorization' => 'Bearer ' . $accessToken,
+                ])
+                ->send('PUT', $url, [
+                    'body' => json_encode([
+                        'comment' => $comment
+                    ])
+                ]);
+
+                $res[] = json_decode($response->getBody());
+
+                \Log::info(print_r($res, true));
+            }
+
+            return $res;
         } catch (\Exception $e) {
             throw $e;
         }
