@@ -15,6 +15,11 @@ class HomeController extends Controller
     {
         $account = Account::first();
 
+        if(empty($account)) return view('home.dashboard', [
+            'account' => [],
+            'locations' => []
+        ]);
+
         $gmbService = new GMBService();
         $client = $gmbService->getClient();
 
