@@ -21,7 +21,7 @@
                                     <tr>
                                         <th style="width: 10px">#</th>
                                         <th>Name</th>
-                                        <th>Content</th>
+                                        <th style="width: 50%">Content</th>
                                         <th>Rating</th>
                                     </tr>
                                 </thead>
@@ -83,6 +83,9 @@
 <style>
     #start-rating .checked {
         color: orange;
+    }
+    .todo-list{
+        text-align: center;
     }
 </style>
 @endsection
