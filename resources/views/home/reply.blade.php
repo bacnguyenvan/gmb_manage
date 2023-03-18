@@ -36,7 +36,7 @@
                             <div class="row">
                                 <div class="col-md-12">
                                     <!-- DIRECT CHAT SUCCESS -->
-                                    <div class="card card-success card-outline direct-chat direct-chat-success @if($i > 1) collapsed-card @endif">
+                                    <div class="card card-success card-outline direct-chat direct-chat-success @if($i == 1 || count($starData) > 0) @else collapsed-card @endif">
                                         <div class="card-header">
                                             <h3 class="card-title">
                                                 <ul class="todo-list" data-widget="todo-list">
@@ -53,7 +53,7 @@
 
                                             <div class="card-tools">
                                                 <button type="button" class="btn btn-tool" data-card-widget="collapse">
-                                                    <i class="fas @if($i > 1) fa-plus @else fa-minus @endif"></i>
+                                                    <i class="fas @if($i == 1 || count($starData) > 0) fa-minus @else fa-plus @endif"></i>
                                                 </button>
                                             </div>
                                         </div>

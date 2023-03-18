@@ -50,7 +50,7 @@
                                                     <p class="phone-number">{{$location->phoneNumbers->primaryPhone ?? ''}}</p>
                                                 </div>
                                                 <div class="widget-user-image">
-                                                    <img class="img-circle" src="../dist/img/gmb.jpg" alt="User Avatar">
+                                                    <img class="img-circle" src="{{asset('dist/img/gmb.jpg')}}" alt="User Avatar">
                                                 </div>
                                                 <div class="card-footer">
                                                     <div class="row">
