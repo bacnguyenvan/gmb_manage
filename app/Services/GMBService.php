@@ -18,7 +18,7 @@ class GMBService
 
         $appUrl = config('app.url');
 
-        $client->setScopes(['profile','https://www.googleapis.com/auth/business.manage']);
+        $client->setScopes(['https://www.googleapis.com/auth/business.manage']);
         $client->setAuthConfig(config('google-api.client_path')); // credentials.json
         $client->setAccessType('offline'); // return refresh-token
         $url = $appUrl . '/gmb/callback';
