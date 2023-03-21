@@ -42,17 +42,17 @@ class ReplyReviewCommand extends Command
      */
     public function handle()
     {
-        $gmbService = new GMBService();
-        $client = $gmbService->getClient();
-
-        $googleClient = new GoogleClient($client);
-        $googlePublisher = new GooglePublisher($googleClient);
-
+        
         $account = Account::first();
 
         if(empty($account)) return 0;
 
         $accountId = $account->account_id;
+
+        $client = new \Google_Client();
+
+        $googleClient = new GoogleClient($client);
+        $googlePublisher = new GooglePublisher($googleClient);
 
         $locations = $googlePublisher->getLocationWithDirection($accountId);
 
