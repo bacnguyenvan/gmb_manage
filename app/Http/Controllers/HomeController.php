@@ -20,8 +20,7 @@ class HomeController extends Controller
             'locations' => []
         ]);
 
-        $gmbService = new GMBService();
-        $client = $gmbService->getClient();
+        $client = new \Google_Client();
 
         $googleClient = new GoogleClient($client);
         $googlePublisher = new GooglePublisher($googleClient);
@@ -113,8 +112,7 @@ class HomeController extends Controller
 
         $direction = $account . '/locations/' . $locationId;
 
-        $gmbService = new GMBService();
-        $client = $gmbService->getClient();
+        $client = new \Google_Client();
 
         $googleClient = new GoogleClient($client);
         $googlePublisher = new GooglePublisher($googleClient);

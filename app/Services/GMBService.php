@@ -43,8 +43,6 @@ class GMBService
             touch($credentialsPath);
         }
         
-        \Log::info($accessToken);
-
         if(!empty($accessToken['refresh_token'])){
             file_put_contents($credentialsPath, json_encode($accessToken));
             \Log::channel('locations')->info("Credentials of google saved");
