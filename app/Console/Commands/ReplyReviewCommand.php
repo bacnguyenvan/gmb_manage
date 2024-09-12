@@ -54,7 +54,8 @@ class ReplyReviewCommand extends Command
         $googleClient = new GoogleClient($client);
         $googlePublisher = new GooglePublisher($googleClient);
 
-        $locations = $googlePublisher->getLocationWithDirection($accountId);
+        $pageSize = config('api.locations.all_page_size');
+        $locations = $googlePublisher->getLocationWithDirection($accountId, $pageSize);
 
         if(empty($locations->locations)) {
             return 0;
