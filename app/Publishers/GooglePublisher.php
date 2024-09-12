@@ -85,7 +85,7 @@ class GooglePublisher
         return $data;
     }
 
-    public function getLocationWithDirection($direction)
+    public function getLocationWithDirection($direction, $pageSize = '', $nextPageToken = '')
     {
         try {
             if (empty($direction)) {
@@ -96,6 +96,14 @@ class GooglePublisher
             $readMark = implode(',', self::READ_MARK_V1);
 
             $url = self::ENDPOINT_BASE_V1 . "$direction/locations/?readMask=$readMark";
+
+            if($pageSize) {
+                $url .= "&pageSize=$pageSize";
+            } 
+            
+            if($nextPageToken) {
+                $url .= "&pageToken=$nextPageToken";
+            }
 
             $response = Http::withHeaders([
                 'Accept' => 'application/json',

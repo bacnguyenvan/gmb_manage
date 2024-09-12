@@ -25,10 +25,28 @@ class HomeController extends Controller
         $googleClient = new GoogleClient($client);
         $googlePublisher = new GooglePublisher($googleClient);
 
-        $locations = $googlePublisher->getLocationWithDirection($account->account_id);
+        $pageSize = config('api.locations.page_size');
+
+        $currentPageToken = request()->pageToken;
+
+        // Determine the previous page token
+        $prevPageToken = null;
+
+        $locations = $googlePublisher->getLocationWithDirection($account->account_id, $pageSize, $currentPageToken);
 
         if(!empty($locations->locations)) {
+
+            if(!empty($locations->nextPageToken)) { // get data for next page
+                $currentPageToken = $locations->nextPageToken;
+                session(['currentToken' => $currentPageToken]);
+            } else {
+                $currentPageToken = '';
+                $prevPageToken = session("currentToken");
+                session()->forget("currentToken");
+            }
+
             $locations = $locations->locations;
+
             foreach($locations as $loc) {
                 $direction =  $account -> account_id . '/' . $loc -> name;
 
@@ -43,7 +61,9 @@ class HomeController extends Controller
 
         $data = [
             'account' => $account,
-            'locations' => $locations
+            'locations' => $locations,
+            'nextPageToken' => $currentPageToken,
+            'prevPageToken' => $prevPageToken
         ];
         return view('home.dashboard', $data);
     }

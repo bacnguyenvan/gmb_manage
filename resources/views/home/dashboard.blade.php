@@ -66,8 +66,18 @@
                                                 </div>
                                             </div>
                                             <!-- /.widget-user -->
-</a>
+                                        </a>
                                         @endforeach
+                                        <div class="col-md-12 mt-2 mb-4">
+                                            @if($prevPageToken)
+                                            <a href="{{ route('dashboard') }}" class="btn btn-info float-left ml-3">
+                                                << Previous
+                                            </a>
+                                            @endif
+                                            @if($nextPageToken)
+                                                <a href="{{route('dashboard')}}?pageToken={{$nextPageToken}}" class="btn btn-info float-right mr-3">Next >> </a>
+                                            @endif
+                                        </div>
                                     @else
                                     <div class="col-md-12 mt-2 mb-4">
                                         <div class="alert alert-danger alert-dismissible">
