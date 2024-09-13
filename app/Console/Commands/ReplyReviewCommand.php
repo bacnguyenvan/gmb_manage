@@ -69,12 +69,9 @@ class ReplyReviewCommand extends Command
 
         if(empty($locationNames['locationNames'])) return 0;
 
-
-        $reviews = $googlePublisher->getBatchGetReviewsLocations($locationNames, $accountId);
-
-        if(empty($reviews->locationReviews)) return 0;
-
-        $locationReviews = $reviews->locationReviews;
+        $locationReviews = $googlePublisher->getBatchGetReviewsLocations($locationNames, $accountId);
+        
+        if(empty($locationReviews)) return 0;
 
         $reviewsNotReplyYet = [];
 
@@ -87,21 +84,21 @@ class ReplyReviewCommand extends Command
         ];
 
         foreach($locationReviews as $rev){
-            $replyReview = $rev->review->reviewReply->comment ?? '';
+            $replyReview = $rev['review']['reviewReply']['comment'] ?? '';
+            
             if(empty($replyReview)) {
-                $starRating = $rev->review->starRating;
+                $starRating = $rev['review']['starRating'];
+                
                 $templateContent = $this->getRandomTemplate($starData[$starRating]);
 
                 if(empty($templateContent)) continue;
                 
-                $reviewId = $rev->name . '/reviews/' .  $rev->review->reviewId;
+                $reviewId = $rev['name'] . '/reviews/' .  $rev['review']['reviewId'];
 
                 $reviewsNotReplyYet[$reviewId] = $templateContent;
             }
         }
-
     
-
         if(empty($reviewsNotReplyYet)) return 0;
         
         $comment = $googlePublisher->replyReviews($reviewsNotReplyYet);

@@ -126,21 +126,38 @@ class GooglePublisher
             }
 
             $accessToken = $this->client->getAccessToken()['access_token'];
-
             $url = self::ENDPOINT_BASE_V4 . "$direction/locations:batchGetReviews";
 
-            $response = Http::contentType("text/plain")
-            ->withHeaders([
-                'Accept' => 'application/json',
-                'Authorization' => 'Bearer ' . $accessToken,
-            ])
-            ->send('POST', $url, [
-                'body' => json_encode($inputs)
-            ]);
+            $allReviews = []; 
+            $nextPageToken = null;
 
-            $data = json_decode($response->getBody());
+            do {
+                $inputs['pageToken'] = $nextPageToken;
 
-            return $data;
+                $response = Http::contentType("text/plain")
+                    ->withHeaders([
+                        'Accept' => 'application/json',
+                        'Authorization' => 'Bearer ' . $accessToken,
+                    ])
+                    ->send('POST', $url, [
+                        'body' => json_encode($inputs),
+                    ]);
+
+                $data = json_decode($response->getBody(), true);
+
+                if (isset($data['locationReviews'])) {
+                    // Append the reviews to the allReviews array
+                    foreach($data['locationReviews'] as $item) {
+                        $allReviews[] = $item;
+                    }
+                }
+
+                // Check if there's a nextPageToken for the next page of results
+                $nextPageToken = $data['nextPageToken'] ?? null;
+
+            } while ($nextPageToken);
+
+            return $allReviews;
         } catch (\Exception $e) {
             throw $e;
         }
@@ -196,7 +213,7 @@ class GooglePublisher
 
                 $res[] = json_decode($response->getBody());
 
-                \Log::info(print_r($res, true));
+                \Log::channel('replies')->info(print_r($res, true));
             }
 
             return $res;

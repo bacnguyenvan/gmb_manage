@@ -106,6 +106,12 @@ return [
             'path' => storage_path('logs/locations.log'),
             'level' => 'info',
         ],
+
+        'replies' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/replies.log'),
+            'level' => 'info',
+        ],
     ],
 
 ];

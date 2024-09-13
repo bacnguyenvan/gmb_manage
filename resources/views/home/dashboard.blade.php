@@ -82,7 +82,7 @@
                                     <div class="col-md-12 mt-2 mb-4">
                                         <div class="alert alert-danger alert-dismissible">
                                             <h5><i class="icon fas fa-ban"></i> Alert!</h5>
-                                            The account has no management location.
+                                            No data.
                                         </div>
                                     </div>
                                     @endif
