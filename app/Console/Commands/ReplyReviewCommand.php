@@ -69,9 +69,15 @@ class ReplyReviewCommand extends Command
 
         if(empty($locationNames['locationNames'])) return 0;
 
-        $locationReviews = $googlePublisher->getBatchGetReviewsLocations($locationNames, $accountId);
+        // new handle
+        // get 25 latest reviews of each store
+        $locationLatestReviews = $googlePublisher->getLatestReviews($locationNames['locationNames']);
+        //
+
+        // get all reviews of all stores
+        // $locationReviews = $googlePublisher->getBatchGetReviewsLocations($locationNames, $accountId);
         
-        if(empty($locationReviews)) return 0;
+        if(empty($locationLatestReviews)) return 0;
 
         $reviewsNotReplyYet = [];
 
@@ -83,19 +89,23 @@ class ReplyReviewCommand extends Command
             'FIVE' => 5
         ];
 
-        foreach($locationReviews as $rev){
-            $replyReview = $rev['review']['reviewReply']['comment'] ?? '';
+        foreach($locationLatestReviews as $revs){
+            if(empty($revs->reviews)) continue;
+
+            foreach($revs->reviews as $rev) {
+                $replyReview = $rev->reviewReply->comment ?? '';
             
-            if(empty($replyReview)) {
-                $starRating = $rev['review']['starRating'];
-                
-                $templateContent = $this->getRandomTemplate($starData[$starRating]);
+                if(empty($replyReview)) {
+                    $starRating = $rev->starRating;
+                    
+                    $templateContent = $this->getRandomTemplate($starData[$starRating]);
 
-                if(empty($templateContent)) continue;
-                
-                $reviewId = $rev['name'] . '/reviews/' .  $rev['review']['reviewId'];
+                    if(empty($templateContent)) continue;
+                    
+                    $reviewId = $rev->name; // accounts/10384xxx/locations/16986xx/reviews/AbFvOqkxxx
 
-                $reviewsNotReplyYet[$reviewId] = $templateContent;
+                    $reviewsNotReplyYet[$reviewId] = $templateContent;
+                }
             }
         }
     

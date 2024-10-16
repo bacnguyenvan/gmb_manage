@@ -4,7 +4,7 @@ namespace App\Publishers;
 
 use Illuminate\Support\Facades\Http;
 use App\Modules\GoogleClient;
-
+use Carbon\Carbon;
 class GooglePublisher
 {
     const ENDPOINT_BASE_V1 = "https://mybusiness.googleapis.com/v1/";
@@ -163,7 +163,7 @@ class GooglePublisher
         }
     }
 
-    public function getReviewsLocation($direction)
+    public function getReviewsLocation($direction, $pageSize = '')
     {
         try {
             if (empty($direction)) {
@@ -173,6 +173,11 @@ class GooglePublisher
             $accessToken = $this->client->getAccessToken()['access_token'];
 
             $url = self::ENDPOINT_BASE_V4 . "$direction/reviews";
+            
+            if($pageSize)
+            {
+                $url .= "?pageSize=$pageSize";
+            }
 
             $response = Http::withHeaders([
                 'Accept' => 'application/json',
@@ -221,4 +226,16 @@ class GooglePublisher
             throw $e;
         }
     }
+
+    public function getLatestReviews($locations)
+    {
+        $reviews = [];
+        foreach($locations as $location)
+        {
+            $reviews[] = $this->getReviewsLocation($location, $pageSize = 25);
+        }
+
+        return $reviews;
+    }
+
 }
